@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <title>My awesome App</title>
+        <link rel="stylesheet" href="./style.css">
+    </header>
+    <body onload="loadTasks()" >
+        <div>
+            <label for="task">Add task</label>
+            <input id="task" type="text" placeholder="new task">
+            <button  onclick="handleSaveTask()">Save</button>
+            <ul id="tasks">
+                <li>Test</li>
+            </ul>
+        </div>
+    </body>
+</html>
+
+<script>
+    async function loadTasks(){
+        res = await fetch('get-tasks', {
+            method: "GET",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+
+        jsonRes = await res.json()
+        
+        ulEl = document.getElementById("tasks")
+        for (task of jsonRes.tasks){
+            liEl = document.createElement("li")
+            liEl.textContent = task
+            ulEl.appendChild(liEl)
+        }
+    }
+
+
+
+    async function handleSaveTask(){
+        var inputEl = document.getElementById("task")
+        var ulEl = document.getElementById("tasks")
+        
+        var liEl = document.createElement("li")
+        liEl.textContent = inputEl.value
+        ulEl.appendChild(liEl)
+        
+        payload = {
+            task: inputEl.value
+        }
+
+        res = await fetch('save-task', {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+
+        jsonRes = await res.json()
+        console.log(jsonRes)
+    }
+</script>
+
